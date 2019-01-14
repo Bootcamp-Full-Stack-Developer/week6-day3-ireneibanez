@@ -16,39 +16,24 @@ const searchPokemon = (() => {
     if(inputText.length <= 0) {
         generateErrorMessage('Debe introducir un nombre o id');
     }
-    fetch(`${ENDPOINT}pokemon/${inputText}`)
-        .then((res) => res.json())
-        .then((data) => {
-            if(data.detail) {
-                generateErrorMessage('Pokemon no encontrado');
-            }
-            pokemonSearched = data;
-            createPokemonInfo(data);
-            createBtnEvolutions();
-        });
-});
+    // Todo Realizar fetch a ENPOINT/pokemon/inputText, en caso de error llamar a generateErrorMessage y en caso de ok
+    // asignar el resultado a la variable pokemonSearched y llamar a las funciones createPokemonInfo y createBtnEvolutions
 
+});
+// Función que realiza todas las llamadas necesarias a otras funciones para traer las evoluciones
 const searchEvolutions = (() => {
-    getPokemonSpecies(pokemonSearched.species)
-        .then((data) => data.evolution_chain)
-        .then((chain) => getEvolutionChain(chain))
-        .then((chainData) => checkEvolutionChain(chainData.chain.evolves_to))
-        .then(() => getEvolutions())
-        .then(() => {
-            if (pokemonEvolutionsData && pokemonEvolutionsData.length > 0) {
-                pokemonEvolutionsData.map((pokemon) => createPokemonInfo(pokemon));
-            }
-        })
+    //Todo llamar a getPokemonSpecias, luego a getEvolutionChain, checkEvolutionChain y finalmente getEvolutions.
+
 });
 
+// Devuelve una promesa tras realizar un fetch a species.url
 const getPokemonSpecies = ((species) => {
-    return fetch(species.url)
-        .then((res) => res.json());
+
 });
 
+// Devuelve una promesa tras realizar un fetch a chain.url
 const getEvolutionChain = ((chain) => {
-    return fetch(chain.url)
-        .then((res) => res.json());
+
 });
 
 const checkEvolutionChain = ((data) => {
@@ -63,66 +48,36 @@ const checkEvolutionChain = ((data) => {
         })
     }
 });
-
+// Realiza una petición por cada entrada del Array pokemonEvolutions y almacena los datos devueltos en el array pokemonEvolutionsData
 const getEvolutions = (() => {
     let promises = [];
-    if (pokemonEvolutions && pokemonEvolutions.length > 0) {
-        promises = pokemonEvolutions.map((pokemon) => fetch(`${ENDPOINT}pokemon/${pokemon}`)
-            .then((res) => res.json())
-            .then((data) => pokemonEvolutionsData.push(data)));
-    }
-    return Promise.all(promises);
+
 });
 
 // Funciones para iteraciones de async & await
 const searchPokemonAsync = async () => {
+
     resetAll();
     const inputText = document.getElementById('input').value;
     if(inputText.length <= 0) {
         generateErrorMessage('Debe introducir un nombre o id');
     }
-    try {
-        const data = await (await fetch(`${ENDPOINT}pokemon/${inputText}`)).json();
-        if(data.detail) {
-            generateErrorMessage('Pokemon no encontrado');
-        }
-        pokemonSearched = data;
-        createPokemonInfo(data);
-        createBtnEvolutions();
-    }catch (err) {
-        console.log(err);
-    }
+
 };
 
 const searchEvolutionsAsync = async () => {
-    try {
-        const species = await getPokemonSpeciesAsync(pokemonSearched.species);
-        const chainData = await getEvolutionChainAsync(species.evolution_chain);
-        console.log(chainData)
-        checkEvolutionChain(chainData.chain.evolves_to);
-        await getEvolutionsAsync();
-        if (pokemonEvolutionsData && pokemonEvolutionsData.length > 0) {
-            pokemonEvolutionsData.map((pokemon) => createPokemonInfo(pokemon));
-        }
-    }catch (err) {
-        console.log(err);
-    }
+
 
 };
 
 const getPokemonSpeciesAsync = async (species) => {
-    return await (await fetch(species.url)).json();
 };
+
 const getEvolutionChainAsync = async (chain) => {
-    return await(await fetch(chain.url)).json();
 };
+
 const getEvolutionsAsync = async () => {
-    console.log(pokemonEvolutions)
-    if (pokemonEvolutions && pokemonEvolutions.length > 0) {
-        await Promise.all(pokemonEvolutions.map(async pokemon => {
-            pokemonEvolutionsData.push(await(await fetch(`${ENDPOINT}pokemon/${pokemon}`)).json());
-        }));
-    }
+
 };
 
 //Funciones para crear los elementos del DOM!
